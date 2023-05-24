@@ -1,17 +1,15 @@
 package eco.bookpickup.model;
 
+import lombok.Data;
 import lombok.Getter;
 
 import java.util.Date;
 
 
-@Getter
-public class PickUpSchedule {
+@Data
+public class PickUp {
 
     Date when;
     String who;
-
-    String bookKey;
-    Book book;
 
 }
