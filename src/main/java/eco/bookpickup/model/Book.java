@@ -11,6 +11,7 @@ import java.util.List;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class Book {
 
+    String key;
     String title;
     List<Author> authors;
     int editionCount;
