@@ -5,35 +5,37 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eco.bookpickup.model.Book;
 import eco.bookpickup.model.PickUpDetail;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 @RestController
 public class RestEndpoint {
 
     Map<String, Book> keyToBook;
     List<PickUpDetail> schedule;
+    SearchService searchService;
 
-    @GetMapping("/{query}")
-    public ApiResponse homePage(@PathVariable String query) throws JsonProcessingException {
-
-        RestTemplate restTemplate = new RestTemplate();
-        String resourceUrl
-                = "https://openlibrary.org/subjects/"+query+".json";
-        ResponseEntity<String> response
-                = restTemplate.getForEntity(resourceUrl, String.class);
-
-//        return response;
-        return raw2BookList(response.getBody());
+    public RestEndpoint(SearchService searchService) {
+        this.searchService = searchService;
     }
 
-    private ApiResponse raw2BookList(String raw) throws JsonProcessingException {
+
+    @GetMapping("/{query}")
+    public ApiResponse search(@PathVariable String query) throws JsonProcessingException {
+
+        String json = searchService.search(query);
+
+//        return response;
+        return jsonToBookList(json);
+    }
+
+
+    private ApiResponse jsonToBookList(String raw) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         ApiResponse apiResponse = objectMapper.readValue(raw,ApiResponse.class);
